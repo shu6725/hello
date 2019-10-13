@@ -80,15 +80,15 @@ def making_o_subsuperlattice(HNF):
 def get_parent_gensi(index):
     empty = []
     for i in range(index*2):
-        empty.append(32)
+        empty.append(50)
     for j in range(index*4):
-        empty.append(16)
+        empty.append(8)
     return empty
 
 def get_o_sub_gensi(index):
     empty = []
     for j in range(index*4):
-        empty.append(16)
+        empty.append(8)
     return empty
 
 #spglib に突っ込めるような最後の形に仕上げる

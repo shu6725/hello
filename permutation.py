@@ -62,6 +62,7 @@ def tikan():
         tin = gene_per(i)
         jun[i] = junkai(tin)
     return jun
+
 #置換の積の式からpolyaの数え上げの定理を使って配色のパターン数を出す
 def polya(jun):
     sum = 0
@@ -109,6 +110,8 @@ def make_candidate(o_sublattice, l):
         if sum ==l :
             omomi4.append(k)
     return omomi4
+
+
 
 
 

@@ -21,7 +21,7 @@ rutile = ([(4, 0, 0),
 
            (0.8, 0.2, 0.5)],
 
-          [14, 14, 8, 8, 8, 8])
+          [50, 50, 8, 8, 8, 8])
 o_sublattice = ([(4, 0, 0),
 
            (0, 4, 0),
@@ -91,7 +91,7 @@ def get_superlattice(parent_lattice, HNF, index):
     def get_parent_gensi(index): #要修正　　
         empty = []
         for i in range(index*2):
-            empty.append(14)
+            empty.append(50)
         for j in range(index*4):
             empty.append(8)
         return empty
