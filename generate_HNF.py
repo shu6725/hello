@@ -146,3 +146,4 @@ def reduce_HNF_list_by_parent_lattice_symmetry(list_HNF, list_rotation_matrix):
 
 
     return list_reduced_HNF
+

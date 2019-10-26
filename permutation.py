@@ -23,7 +23,101 @@ def gene_per(rotation, translation, dic_zahyou):
                 tin[l] = j
     return tin
 
-def generate_per(superlattice, o_sublattice):
+def gene_trans(HNF):
+    """
+    HNFから並進操作の一覧を作成
+
+    parameters:HNF
+
+    retruns
+
+    """
+    int_HNF = HNF.astype('int64')
+    vectors = np.zeros(3)
+    hantei = True
+    for dimention in range(3):
+        cp_vecs = deepcopy(vectors)
+        if HNF[dimention][dimention] > 1:
+            for king in range(1, HNF[dimention][dimention]):
+                cp_vecs2 = deepcopy(cp_vecs)
+                if hantei:
+                    cp_vecs2[dimention] += king/HNF[dimention][dimention]
+                else:
+                    for num_vecs in range(cp_vecs2.shape[0]):
+                        cp_vecs2[num_vecs][dimention] += king/HNF[dimention][dimention]
+                vectors = np.vstack((vectors, cp_vecs2))
+            hantei = False
+    return vectors
+
+def get_trans_permuation(dic_zahyou, translation):
+    """
+    並進操作について置換の移り先を示す辞書を作成
+
+    parameters
+
+    retruns
+
+    """
+    tin = dict()
+    dic2 = deepcopy(dic_zahyou)
+    for l in range(len(dic_zahyou)):
+        dic2[l] = (dic_zahyou[l] + translation)
+        dic2[l] = np.round(dic2[l], 3)%1
+    for l in range(len(dic_zahyou)):
+        for j in range(len(dic_zahyou)):
+            if all(np.round(dic_zahyou[j], 3) == np.round(dic2[l], 3)):
+                tin[l] = j
+    return tin
+
+def get_trans_perms(dic_zahyou, translations):
+    """
+    並進操作について置換の移り先を示す辞書の辞書を作成
+
+    parameters
+
+    retruns
+
+    """
+    trans_perms = dict()
+    for i in range(len(translations)):
+        trans_perms[i] = get_trans_permuation(dic_zahyou, translations[i])
+    return trans_perms
+
+def kumiawase(rot_tikan, trans_tikan):
+    """
+    回転操作と並進操作の置換を組合す
+
+    parameters
+
+    retruns
+
+    """
+    hosii = dict()
+    for i in range(len(rot_tikan)):
+        hosii[i] = trans_tikan[rot_tikan[i]]
+    return hosii
+
+def generate_abs_permuatation(parent_lattice_jun, trans_perms):
+    """
+    回転操作と並進操作の置換を組合せた究極の辞書を作成
+
+    parameters
+
+    retruns
+
+    """
+    tikan_list = list()
+    for i in parent_lattice_jun:
+        for j in trans_perms:
+            if i == 1:
+                print(j, trans_perms[j])
+            tikan = kumiawase(parent_lattice_jun[i], trans_perms[j])
+            if i == 1:
+                print(tikan)
+            tikan_list.append(tikan)
+    return tikan_list
+
+def generate_per(superlattice, o_sublattice):##各座標をnumpyに変換して、gene_perを使う
     parent_sym = spglib.get_symmetry(superlattice)
     tin = dict()
     arr = np.asarray(o_sublattice[1])   #lattcie no 行列表示
@@ -71,35 +165,6 @@ def polya(jun):
     polya = sum / len(jun)
     return polya
 
-#unique
-def unique(o_sublattice, parent_sym_jun, omomi4):
-    omomi4_neo = deepcopy(omomi4)#copy wo sakusei
-    lis = set()
-
-    for i in range(len(omomi4)):#through all candidate
-        if omomi4[i] in omomi4_neo:#kouho ga mada 生き残ってるかチェック
-            for j in range(1, len(parent_sym_jun)):#置換操作について回す　
-                d = dict()
-                sta = ""
-                for k in range(len(o_sublattice[2])):
-                    d[parent_sym_jun[j][k]] = omomi4[i][k]#str辞書の作成
-                for r  in range(len(o_sublattice[2])):#staの作成 sta is made from tikan[j]
-                    sta += d[r]
-                if int(sta) is not int(omomi4[i]):
-                    if sta in omomi4_neo:
-                        omomi4_neo.remove(sta)
-                        lis.add(i)
-    manko = []
-    can = omomi4
-    for i in range(len(lis)):
-        lis = list(lis)
-        a = lis[i]
-        if can[a][0] == can[a][4] and can[a][1] == can[a][5] and can[a][2] == can[a][6] and can[a][3] == can[a][7]:
-            continue
-        else:
-            manko.append(can[a])
-    return manko
-
 def make_candidate(o_sublattice, l):
     omomi4 = []
     for i in range(2**len(o_sublattice[2])):
@@ -110,6 +175,41 @@ def make_candidate(o_sublattice, l):
         if sum ==l :
             omomi4.append(k)
     return omomi4
+
+def unique(parent_sym_jun, omomi4):
+    """
+    得られた究極の対称操作の辞書に基づいて、配列をユニークしていく
+
+    parameters
+
+    parent_sym_jun
+
+    omomi4 は各空孔数ごとのcandidate集合
+
+    retruns
+
+    """
+    omomi4_neo = deepcopy(omomi4)#copy wo sakusei
+    lis = set()
+
+    for i in range(len(omomi4)):#through all candidate
+        if omomi4[i] in omomi4_neo:#kouho ga mada 生き残ってるかチェック
+            for j in range(1, len(parent_sym_jun[0])):#置換操作について回す　
+                d = dict()
+                sta = ""
+                for k in range(len(parent_sym_jun[0])):
+                    d[parent_sym_jun[j][k]] = omomi4[i][k]#str辞書の作成
+                for r  in range(len(parent_sym_jun[0])):#staの作成 sta is made from tikan[j]
+                    sta += d[r]
+                if int(sta) is not int(omomi4[i]):
+                    if sta in omomi4_neo:
+                        omomi4_neo.remove(sta)
+                        lis.add(omomi4[i])
+
+    return lis
+
+
+
 
 
 
