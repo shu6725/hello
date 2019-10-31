@@ -14,6 +14,8 @@ def get_superlattice_vectors(o_sublattice, HNF):
 
 
 def zurasu(motono, a, i):
+    # a は各軸方向の拡大率
+    # i は1-3の値
     original = deepcopy(motono)
     for j in range(1, a[i]):
         vec = np.zeros(3)
@@ -92,7 +94,8 @@ def get_o_sub_gensi(index):
     return empty
 
 #spglib に突っ込めるような最後の形に仕上げる
-def get_superlattice(parent_lattice, HNF, index):
+def get_superlattice(parent_lattice, HNF):
+    index = np.linalg.det(HNF)
     a = [[], [], []] # a は　新しいsuperlattice
     a[0] = get_superlattice_vectors(parent_lattice, HNF)
     a[1] = making_superlattice(HNF)
@@ -102,7 +105,8 @@ def get_superlattice(parent_lattice, HNF, index):
     a = tuple(a)
     return a
 
-def get_o_superlattice(parent_lattice, HNF, index):
+def get_o_superlattice(parent_lattice, HNF):
+    index = np.linalg.det(HNF)
     a = [[], [], []] # a は　新しいsuperlattice
     a[0] = get_superlattice_vectors(parent_lattice, HNF)
     a[1] = making_o_subsuperlattice(HNF)
