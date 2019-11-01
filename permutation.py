@@ -194,7 +194,7 @@ def unique(parent_sym_jun, omomi4):
 
     for i in range(len(omomi4)):#through all candidate
         if omomi4[i] in omomi4_neo:#kouho ga mada 生き残ってるかチェック
-            for j in range(1, len(parent_sym_jun[0])):#置換操作について回す　
+            for j in range(1, len(parent_sym_jun)):#置換操作について回す　
                 d = dict()
                 sta = ""
                 for k in range(len(parent_sym_jun[0])):
@@ -205,7 +205,6 @@ def unique(parent_sym_jun, omomi4):
                     if sta in omomi4_neo:
                         omomi4_neo.remove(sta)
                         lis.add(omomi4[i])
-
     return lis
 
 
