@@ -93,8 +93,8 @@ def kumiawase(rot_tikan, trans_tikan):
 
     """
     hosii = dict()
-    for i in range(len(rot_tikan)):
-        hosii[i] = trans_tikan[rot_tikan[i]]
+    for hayashi in range(len(rot_tikan)):
+        hosii[hayashi] = trans_tikan[rot_tikan[hayashi]]
     return hosii
 
 def generate_abs_permuatation(parent_lattice_jun, trans_perms):
@@ -109,11 +109,7 @@ def generate_abs_permuatation(parent_lattice_jun, trans_perms):
     tikan_list = list()
     for i in parent_lattice_jun:
         for j in trans_perms:
-            if i == 1:
-                print(j, trans_perms[j])
             tikan = kumiawase(parent_lattice_jun[i], trans_perms[j])
-            if i == 1:
-                print(tikan)
             tikan_list.append(tikan)
     return tikan_list
 
